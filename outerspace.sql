@@ -1,7 +1,7 @@
 CREATE TABLE planets(
-    id TEXT PRIMARY KEY,
+    id VARCHAR(40) PRIMARY KEY,
     orbital_period_years FLOAT NOT NULL,
-    planet_star NOT NULL VARCHAR(40) REFERENCES stars
+    planet_star VARCHAR(40) NOT NULL REFERENCES stars
 );
 
 INSERT INTO planets(id, orbital_period_years, planet_star)
@@ -12,7 +12,7 @@ INSERT INTO planets(id, orbital_period_years, planet_star)
     ('Gliese 876 b', '0.236','Gliese 876');
 
 CREATE TABLE stars(
-    id  VARCHAR(40) PRIMARY KEY,
+    id VARCHAR(40) PRIMARY KEY,
     star_temp_in_kelvin INT NOT NULL
 );
 
@@ -23,11 +23,20 @@ INSERT INTO stars(id, star_temp_in_kelvin)
 
 
 CREATE TABLE moons(
-    id  VARCHAR(40) PRIMARY KEY
-    moon_planet NOT NULL VARCHAR(40) REFERENCES planets
+    id VARCHAR(40) PRIMARY KEY,
+    moon_planet VARCHAR(40) NOT NULL REFERENCES planets
 );
 
 INSERT INTO moons(id, moon_planet)
     VALUES ('Moon','Earth'),
            ('Phobos','Mars'),
            ('Deimos','Mars');
+
+SELECT planets.id, stars.id, count(moons.id)
+FROM planets
+JOIN stars
+ON planets.planet_star = stars.id
+LEFT OUTER JOIN moons
+ON moons.moon_planet = planets.id
+GROUP BY planets.id, stars.id;
+ORDER BY planets.id;
